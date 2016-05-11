@@ -26,13 +26,10 @@ def	getMatchList(instring):
 			indI = instring.find("Jfr")
 			if indI > 0:
 				strC = instring[indI + 4 : len(instring)]
-				#print (strC)
 				if len(strC) > 0:
 					mlist = strC.split(",")
-					#pprint (mlist)
 					for mstr in mlist:
 						if len(mstr) > 0:
-							#print (mstr.strip())
 							mstr = mstr.strip()
 							mstr = mstr.replace(".", "")
 							mstr = mstr.lower()
@@ -51,7 +48,7 @@ def matchConcept(matchlist, uuid, name):
 			
 			#om ordet finns i matchdict
 			if word in vocab:
-				#word = word.encode('UTF-8')
+				
 				w = vocab[word]
 				
 				#blockera motlänkar så att relationen enbart skapas en väg
