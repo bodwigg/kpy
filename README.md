@@ -1,2 +1,1 @@
-# kpy
-#Script for matchning concepts in kulturnav.org
+Scripts for matchning concepts in kulturnav.org
