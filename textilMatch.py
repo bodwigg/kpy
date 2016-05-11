@@ -3,12 +3,6 @@ import json
 import sys
 from pprint import pprint
 
-
-#ToDo
-# Just nu skapas dubbla relationer från en post till en post och sedan vid nästa läsning tillbaka
-# Jag får lägga upp en blockerings-dict där redan lästa läggs in och sedan inte läses om
-
-
 #strLang = "nn"
 strLang = "sv"
 #strLang = "no"
@@ -18,8 +12,6 @@ f = open('textMatch.txt', 'w')
 nf = open('textNoMatch.txt', 'w')
 bf = open('textNoRel.txt', 'w')
 	
-#f.write ('Event\t Name\t PlaceString\t EventUUID \t UUID \n')
-
 
 def	getMatchList(instring):
 	
@@ -29,11 +21,6 @@ def	getMatchList(instring):
 	
 	if len(instring) > 0:
 		
-		#hitta " Jfr ", ta reda på index
-		## ta texten efter index till en sträng
-		### dela på kommatecken, trimma
-		#### returnera lista
-
 		intI = instring.count("Jfr")
 		if intI == 1:
 			indI = instring.find("Jfr")
@@ -58,7 +45,6 @@ def matchConcept(matchlist, uuid, name):
 	w1 = ""
 	w2 = ""
 	draftstring = ""
-	#matchlistan innehåller de ord som jag ska matcha mot
 	if len(matchlist) > 0:
 	
 		for word in matchlist:
@@ -72,14 +58,11 @@ def matchConcept(matchlist, uuid, name):
 				blockDict[w] = True
 				bf.write (w + '\n')
 				
-				#ska ska jag infoga kod för att göra det till förslag:
 				#!!Draft%%<useruuid>%%<Källa, kommentar + ;1;
 				
 				w1 = w1 + ';1;' + w
 				w2 = w2 + '; ' + word
-				
-				#f.write (word + '\t' + w + '\t' + uuid + '\n')
-				#f.write (uuid + '\t' + w + '\t' + '\n')
+
 			else:
 				nf.write ('No match for \t' + name + ' \t'  + uuid + '\tDescription: ' + word + '\n')
 
@@ -95,7 +78,6 @@ def matchConcept(matchlist, uuid, name):
 			
 def loadMatchDict():
 
-	#eftersom det i detta case är fråga om 100% matchning, så bygger jag en dict med alla ord som jag ska matcha mot
 	matchDict = {} 
 	
 	mr = requests.get('http://kulturnav.org/api/list/5a145f3c-6559-44f1-8f83-119734b3e23d/0/500')
@@ -109,9 +91,6 @@ def loadMatchDict():
 			name = i['properties']['entity.name'][0]['value']['sv']
 			
 			matchDict[name] = uuid
-			
-			#pprint (type(name))
-			#pprint (uuid + ' ' + name)
 
 	return (matchDict)
 	
@@ -121,10 +100,6 @@ def loadMatchDict():
 # Ladda matchningsunderlaget - hela datasetet som en dict - det förutsätter att alla termer är unika
 vocab = loadMatchDict()
 blockDict = {} 
-
-#pprint (vocab)
-	
-#huvudloopen-----------------------------------------------------------------------------------------------------
 
 iloop = 500
 for c in range(-1,999, iloop):
@@ -162,7 +137,7 @@ for c in range(-1,999, iloop):
 							#desc
 							if 'entity.description' in p:
 								n = p['entity.description']
-								name = p['entity.name'][0]['value']['sv']
+								name = p['entity.name'][0]['value'][strLang]
 								for e in n:
 									
 									if 'value' in e:
@@ -170,9 +145,6 @@ for c in range(-1,999, iloop):
 										textDesc = textDesc[strLang]	
 										
 										a = getMatchList(textDesc)
-										
-										#pprint (a)
-										#f.write (str(a) + '\t' + strUUID +'\n')
 										
 										if len(a) > 0:
 											b = matchConcept(a, strUUID, name )
